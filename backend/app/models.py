@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import CheckConstraint, DateTime, Integer, String, case, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column
-from backend.app.db import Base
+from app.db import Base
 
 
 class Item(Base):

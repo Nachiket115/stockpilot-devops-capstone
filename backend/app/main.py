@@ -3,8 +3,8 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from backend.app.db import get_db
-from backend.app.routers.items import router as items_router
+from app.db import get_db
+from app.routers.items import router as items_router
 
 app = FastAPI(
     title="StockPilot API",

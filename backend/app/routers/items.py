@@ -4,9 +4,9 @@ from sqlalchemy import case, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from backend.app.db import get_db
-from backend.app.models import Item
-from backend.app.schemas import IssueRequest, ItemCreate, ItemOut, ItemUpdate, StatsOut
+from app.db import get_db
+from app.models import Item
+from app.schemas import IssueRequest, ItemCreate, ItemOut, ItemUpdate, StatsOut
 
 router = APIRouter()
 
