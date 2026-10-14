@@ -196,6 +196,10 @@ def test_issue_more_than_available_409(client: TestClient, item_payload: dict):
     created = client.post("/api/items", json=item_payload).json()
     r = client.post(f"/api/items/{created['id']}/issue", json={"quantity": 999})
     assert r.status_code == 409
+    detail = r.json()["detail"]
+    assert item_payload["sku"] in detail
+    assert str(item_payload["quantity"]) in detail
+    assert "999" in detail
 
     # Stock must be unchanged
     after = client.get(f"/api/items/{created['id']}").json()

@@ -137,8 +137,8 @@ def issue_item(item_id: int, payload: IssueRequest, db: Session = Depends(get_db
         units_issued_total.inc(payload.quantity)
         return updated_item
 
-    item_exists = db.scalar(select(Item.id).where(Item.id == item_id))
-    if item_exists is None:
+    item = db.scalar(select(Item).where(Item.id == item_id))
+    if item is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Item with id {item_id} not found",
@@ -146,5 +146,5 @@ def issue_item(item_id: int, payload: IssueRequest, db: Session = Depends(get_db
 
     raise HTTPException(
         status_code=status.HTTP_409_CONFLICT,
-        detail=f"Insufficient stock for item {item_id}: cannot issue {payload.quantity} units",
+        detail=f"Insufficient stock for SKU {item.sku}: {item.quantity} on hand, cannot issue {payload.quantity}",
     )
