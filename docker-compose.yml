@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: stockpilot-postgres
+    environment:
+      POSTGRES_USER: stockpilot
+      POSTGRES_PASSWORD: stockpilot
+      POSTGRES_DB: stockpilot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stockpilot -d stockpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  stockpilot-backend:
+    build: ./backend
+    container_name: stockpilot-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://stockpilot:stockpilot@postgres:5432/stockpilot
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+    ports:
+      - "8000:8000"
+
+  stockpilot-frontend:
+    build: ./frontend
+    container_name: stockpilot-frontend
+    depends_on:
+      - stockpilot-backend
+    ports:
+      - "3000:8080"
+
+volumes:
+  postgres_data:
