@@ -1,0 +1,6 @@
+aws_region   = "ap-south-1"
+cluster_name = "stockpilot-eks"
+azs = [
+  "ap-south-1a",
+  "ap-south-1b",
+]
