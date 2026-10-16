@@ -1,0 +1,94 @@
+# Default values for stockpilot Helm chart.
+
+backend:
+  name: stockpilot-backend
+  replicaCount: 2
+  image:
+    repository: ghcr.io/nachiket115/stockpilot-backend
+    tag: "740ffabc79f5617c7e3d21cd642c6551a621af9b"
+    pullPolicy: IfNotPresent
+  port: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+  probes:
+    startup:
+      path: /health
+      failureThreshold: 30
+      periodSeconds: 2
+    readiness:
+      path: /ready
+      periodSeconds: 5
+    liveness:
+      path: /health
+      periodSeconds: 10
+
+frontend:
+  name: stockpilot-frontend
+  replicaCount: 2
+  image:
+    repository: ghcr.io/nachiket115/stockpilot-frontend
+    tag: "740ffabc79f5617c7e3d21cd642c6551a621af9b"
+    pullPolicy: IfNotPresent
+  port: 8080
+  servicePort: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+  probes:
+    readiness:
+      path: /
+      periodSeconds: 5
+    liveness:
+      path: /
+      periodSeconds: 10
+
+postgres:
+  name: stockpilot-postgres
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: "16-alpine"
+    pullPolicy: IfNotPresent
+  port: 5432
+  # Data lives on an emptyDir and is lost if the pod restarts, because this cluster has no EBS CSI driver.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 70
+    runAsGroup: 70
+    fsGroup: 70
+  env:
+    pgdata: /var/lib/postgresql/data/pgdata
+  # DEV ONLY placeholder credentials. Not for production. Replace with a real secret manager
+  # (for example External Secrets or sealed-secrets) outside this capstone.
+  user: stockpilot
+  password: stockpilot
+  database: stockpilot
+
+ingress:
+  enabled: true
+  className: nginx
+
+monitoring:
+  enabled: false

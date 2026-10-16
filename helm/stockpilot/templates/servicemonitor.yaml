@@ -1,0 +1,21 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: stockpilot-backend
+  labels:
+    app.kubernetes.io/name: stockpilot-backend
+    app.kubernetes.io/part-of: stockpilot
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  namespaceSelector:
+    matchNames:
+      - stockpilot
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stockpilot-backend
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+{{- end }}

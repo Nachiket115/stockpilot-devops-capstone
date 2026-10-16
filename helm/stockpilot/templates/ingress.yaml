@@ -1,0 +1,29 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stockpilot-ingress
+  labels:
+    app.kubernetes.io/name: stockpilot-ingress
+    app.kubernetes.io/part-of: stockpilot
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: stockpilot-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stockpilot-frontend
+                port:
+                  number: 80
+{{- end }}

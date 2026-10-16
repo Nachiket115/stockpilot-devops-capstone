@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stockpilot-frontend
+  labels:
+    app.kubernetes.io/name: stockpilot-frontend
+    app.kubernetes.io/part-of: stockpilot
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: {{ .Values.frontend.servicePort }}
+      targetPort: {{ .Values.frontend.port }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: stockpilot-frontend
